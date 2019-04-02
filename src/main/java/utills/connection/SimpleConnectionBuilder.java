@@ -9,13 +9,11 @@ import java.sql.SQLException;
 @Setter
 public class SimpleConnectionBuilder implements ConnectionBuilder {
     private final static String LOGIN = "postgres";
-    private final static String URL = "dbc:postgresql://localhost:5432/";
+
+    private final static String URL = "jdbc:postgresql://localhost:5432/postgres";
     private final static String PASSWORD = "99ronore";
 
-    private String databaseName;
-
     public SimpleConnectionBuilder(String databaseName) {
-        this.databaseName = databaseName;
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException exc) {
@@ -24,6 +22,6 @@ public class SimpleConnectionBuilder implements ConnectionBuilder {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL + databaseName, LOGIN, PASSWORD);
+        return DriverManager.getConnection(URL, LOGIN, PASSWORD);
     }
 }
