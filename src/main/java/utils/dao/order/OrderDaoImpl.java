@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class OrderDaoImpl implements DAO<Order> {
 
@@ -26,8 +28,6 @@ public class OrderDaoImpl implements DAO<Order> {
             = "SELECT * FROM orders";
 
 
-
-
     private ConnectionBuilder builder = new SimpleConnectionBuilder();
 
     //add order with unique customer
@@ -35,11 +35,11 @@ public class OrderDaoImpl implements DAO<Order> {
         try {
             Connection con = builder.getConnection();
             PreparedStatement pst = con.prepareStatement(INSERT);
-            for (int i = 0; i < order.getAmount().size(); i++) {
-                pst.setInt(1, order.getOrderId());
-                pst.setInt(2, order.getCustomerId());
-                pst.setInt(3, order.getGoodsId().get(i));
-                pst.setInt(4, order.getAmount().get(i));
+            for (int i = 0; i < order.getAmounts().size(); i++) {
+                pst.setInt(1, order.getOrderID());
+                pst.setInt(2, order.getCustomerID());
+                pst.setInt(3, order.getGoodsID().get(i));
+                pst.setInt(4, order.getAmounts().get(i));
                 pst.executeUpdate();
             }
         } catch (
@@ -58,21 +58,21 @@ public class OrderDaoImpl implements DAO<Order> {
             pst.setLong(1, id);
             ResultSet orderSet = pst.executeQuery();
 
-            int orderId;
-            int customerId;
-            List<Integer> goods = new ArrayList<Integer>();
-            List<Integer> amount = new ArrayList<Integer>();
+            int orderID;
+            int customerID;
+            List<Integer> goods = new ArrayList<>();
+            List<Integer> amount = new ArrayList<>();
 
             if (orderSet.next()) {
-                orderId = orderSet.getInt("order_id");
-                customerId = orderSet.getInt("customer_id");
+                orderID = orderSet.getInt("order_id");
+                customerID = orderSet.getInt("customer_id");
                 goods.add(orderSet.getInt("good_id"));
                 amount.add(orderSet.getInt("amount"));
                 while (orderSet.next()) {
                     goods.add(orderSet.getInt("good_id"));
                     amount.add(orderSet.getInt("amount"));
                 }
-                order = Order.of(orderId, customerId, goods, amount);
+                order = Order.of(orderID, customerID, goods, amount);
             }
 
             orderSet.close();
@@ -84,7 +84,16 @@ public class OrderDaoImpl implements DAO<Order> {
     }
 
     public List<Order> findAll() {
-        return null;
+        List<Order> orders = new ArrayList<>();
+        try {
+            Connection con = builder.getConnection();
+            PreparedStatement pst = con.prepareStatement(SELECT_ALL);
+            ResultSet set = pst.executeQuery();
+            addAll(set, orders);
+        } catch (SQLException exc) {
+            System.out.println(EXCEPTION_MESSAGE);
+        }
+        return orders;
     }
 
     public Order update(Order order) {
@@ -93,5 +102,27 @@ public class OrderDaoImpl implements DAO<Order> {
 
     public void delete(Long id) {
 
+    }
+
+    private void addAll(ResultSet set, List<Order> orders) throws SQLException {
+        Set<Integer> orderIDs = new TreeSet<>();
+        int customerID;
+        List<Integer> goods;
+        List<Integer> amounts;
+        while (set.next()) {
+            final int orderID = set.getInt("order_id");
+            if (orderIDs.add(orderID)) {
+                customerID = set.getInt("customer_id");
+                goods = new ArrayList<>();
+                goods.add(set.getInt("good_id"));
+                amounts = new ArrayList<>();
+                amounts.add(set.getInt("amount"));
+                orders.add(Order.of(orderID, customerID, goods, amounts));
+            } else {
+                Order order = orders.stream()
+                        .filter(elem -> elem.getOrderID() == orderID).findFirst().get();
+                order.addGood(set.getInt("good_id"), set.getInt("amount"));
+            }
+        }
     }
 }
