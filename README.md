@@ -1,2 +1,2 @@
-# jdbcApp
-small jdbc app
+# ShopDatabaseApp
+small shop database app using JDBC
