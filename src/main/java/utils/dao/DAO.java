@@ -5,9 +5,12 @@ import java.util.List;
 public interface DAO<T> {
 
     T create (T t);
-    T read(int id);
+
+    T read(long id);
+
     List<T> findAll();
 
     T update(T t);
-    void delete(int id);
+
+    void delete(long id);
 }
