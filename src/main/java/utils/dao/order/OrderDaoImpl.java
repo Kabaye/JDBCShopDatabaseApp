@@ -1,5 +1,6 @@
 package utils.dao.order;
 
+import lombok.NonNull;
 import shop.Order;
 import utils.connection.ConnectionBuilder;
 import utils.connection.SimpleConnectionBuilder;
@@ -27,6 +28,9 @@ public class OrderDaoImpl implements DAO<Order> {
     private static final String SELECT_ALL
             = "SELECT * FROM orders";
 
+    private static final String DELETE
+            = "DELETE FROM orders WHERE order_id=?";
+
 
     private ConnectionBuilder builder = new SimpleConnectionBuilder();
 
@@ -38,7 +42,7 @@ public class OrderDaoImpl implements DAO<Order> {
             for (int i = 0; i < order.getAmounts().size(); i++) {
                 pst.setInt(1, order.getOrderID());
                 pst.setInt(2, order.getCustomerID());
-                pst.setInt(3, order.getGoodsID().get(i));
+                pst.setInt(3, order.getGoodIDs().get(i));
                 pst.setInt(4, order.getAmounts().get(i));
                 pst.executeUpdate();
             }
@@ -50,7 +54,7 @@ public class OrderDaoImpl implements DAO<Order> {
     }
 
     //get order
-    public Order read(Long id) {
+    public Order read(long id) {
         Order order = null;
         try {
             Connection con = builder.getConnection();
@@ -97,14 +101,24 @@ public class OrderDaoImpl implements DAO<Order> {
     }
 
     public Order update(Order order) {
-        return null;
+        this.delete(order.getOrderID());
+        this.create(order);
+        return order;
     }
 
-    public void delete(Long id) {
-
+    //удаляю весь заказ((
+    public void delete(long id) {
+        try {
+            Connection con = builder.getConnection();
+            PreparedStatement pst = con.prepareStatement(DELETE);
+            pst.setLong(1, id);
+            pst.executeUpdate();
+        } catch (SQLException exc) {
+            System.out.println(EXCEPTION_MESSAGE);
+        }
     }
 
-    private void addAll(ResultSet set, List<Order> orders) throws SQLException {
+    private void addAll(@NonNull ResultSet set, List<Order> orders) throws SQLException {
         Set<Integer> orderIDs = new TreeSet<>();
         int customerID;
         List<Integer> goods;
