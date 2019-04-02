@@ -10,24 +10,24 @@ import java.util.List;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class Order {
-    private int orderId;
-    private int customerId;
-    private List<Integer> goodsId;
+    private int orderID;
+    private int customerID;
+    private List<Integer> goodsID;
     private List<Integer> amounts;
 
     @Override
     public String toString() {
         return "Order{" +
-                "orderId=" + orderId +
-                ", customerId=" + customerId +
-                ", goodsId=" + goodsId +
+                "orderID=" + orderID +
+                ", customerID=" + customerID +
+                ", goodsID=" + goodsID +
                 ", amounts=" + amounts +
                 '}';
     }
 
     public void addGood(int goodID, int amount)
     {
-        goodsId.add(goodID);
+        goodsID.add(goodID);
         amounts.add(amount);
     }
 
