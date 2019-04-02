@@ -1,4 +1,4 @@
-package utills.connection;
+package utils.connection;
 
 import lombok.Setter;
 
@@ -13,7 +13,7 @@ public class SimpleConnectionBuilder implements ConnectionBuilder {
     private final static String URL = "jdbc:postgresql://localhost:5432/postgres";
     private final static String PASSWORD = "99ronore";
 
-    public SimpleConnectionBuilder(String databaseName) {
+    public SimpleConnectionBuilder() {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException exc) {
