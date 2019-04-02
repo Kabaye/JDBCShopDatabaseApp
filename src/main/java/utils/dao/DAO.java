@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface DAO<T> {
     T create (T t);
-    T read(Long id);
+    T read(int id);
     List<T> findAll();
     T update(T t);
-    void delete(Long id);
+    void delete(int id);
 }
