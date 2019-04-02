@@ -12,7 +12,7 @@ import java.util.List;
 public class Order {
     private int orderID;
     private int customerID;
-    private List<Integer> goodsID;
+    private List<Integer> goodIDs;
     private List<Integer> amounts;
 
     @Override
@@ -20,14 +20,14 @@ public class Order {
         return "Order{" +
                 "orderID=" + orderID +
                 ", customerID=" + customerID +
-                ", goodsID=" + goodsID +
+                ", goodIDs=" + goodIDs +
                 ", amounts=" + amounts +
                 '}';
     }
 
     public void addGood(int goodID, int amount)
     {
-        goodsID.add(goodID);
+        goodIDs.add(goodID);
         amounts.add(amount);
     }
 
