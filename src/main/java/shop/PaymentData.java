@@ -12,6 +12,11 @@ public class PaymentData {
     private long bankAccount;
     private String accountCurrency;
 
+    public PaymentData(long bankAccount, String accountCurrency) {
+        this.bankAccount = bankAccount;
+        this.accountCurrency = accountCurrency;
+    }
+
     @Override
     public String toString() {
         return "PaymentData{" +

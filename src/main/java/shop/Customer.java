@@ -13,6 +13,12 @@ public class Customer {
     private long phone;
     private PaymentData paymentData;
 
+    public Customer(String surnameName, long phone, PaymentData paymentData) {
+        this.surnameName = surnameName;
+        this.phone = phone;
+        this.paymentData = paymentData;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
