@@ -11,4 +11,12 @@ public class PaymentData {
     private int customerId;
     private long bankAccount;
     private String accountCurrency;
+
+    @Override
+    public String toString() {
+        return "PaymentData{" +
+                "bankAccount = " + bankAccount +
+                ", accountCurrency = '" + accountCurrency + '\'' +
+                '}';
+    }
 }
