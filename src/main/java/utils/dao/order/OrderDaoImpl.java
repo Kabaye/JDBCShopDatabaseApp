@@ -25,7 +25,7 @@ public class OrderDaoImpl implements DAO<Order> {
             = "SELECT order_id, customer_id, good_id, amount, id FROM orders WHERE order_id=?";
 
     private static final String SELECT_ALL
-            = "SELECT * FROM orders";
+            = "SELECT * FROM orders ORDER BY order_id";
 
     private static final String UPDATE
             = "UPDATE orders SET good_id=?, amount=? where id=? and order_id=? and customer_id=?";
