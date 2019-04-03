@@ -11,14 +11,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class Order {
-    private int orderID;
-    private int customerID;
-    private List<Integer> IDs;
-    private List<Integer> goodIDs;
-    private List<Integer> amounts;
+    private long orderID;
+    private long customerID;
+    private List<Long> IDs;
+    private List<Long> goodIDs;
+    private List<Long> amounts;
 
 
-    public Order(int customerID, List<Integer> goodIDs, List<Integer> amounts) {
+    public Order(long customerID, List<Long> goodIDs, List<Long> amounts) {
         this.orderID = 0;
         this.IDs = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class Order {
                 '}';
     }
 
-    public void addGood(int goodID, int amount)
+    public void addGood(long goodID, long amount)
     {
         goodIDs.add(goodID);
         amounts.add(amount);
