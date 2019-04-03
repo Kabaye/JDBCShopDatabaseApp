@@ -5,7 +5,10 @@ import utils.connection.ConnectionBuilder;
 import utils.connection.SimpleConnectionBuilder;
 import utils.dao.DAO;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +21,7 @@ public class OrderDaoImpl implements DAO<Order> {
     private static final String INSERT
             = "INSERT INTO orders (order_id, customer_id, good_id, amount,id) VALUES (?, ?, ?, ?,?)";
 
-    private static final String SELECT_ORDERS_BY_ID
+    private static final String SELECT_ORDER_BY_ID
             = "SELECT order_id, customer_id, good_id, amount, id FROM orders WHERE order_id=?";
 
     private static final String SELECT_ALL
@@ -40,19 +43,19 @@ public class OrderDaoImpl implements DAO<Order> {
     public Order create(Order order) {
         try {
             Connection con = builder.getConnection();
-
             PreparedStatement pst = con.prepareStatement(GET_MAX_ID);
             ResultSet set = pst.executeQuery();
             if (set.next()) {
                 int counter = set.getInt("MAX_ID") + 1;
                 pst.close();
                 set.close();
-                pst = con.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+                pst = con.prepareStatement(INSERT);
                 for (int i = 0; i < order.getAmounts().size(); i++) {
                     pst.setInt(1, order.getOrderID());
                     pst.setInt(2, order.getCustomerID());
                     pst.setInt(3, order.getGoodIDs().get(i));
                     pst.setInt(4, order.getAmounts().get(i));
+                    order.getIDs().add(counter);
                     pst.setInt(5, counter++);
                     pst.executeUpdate();
                     pst.close();
@@ -72,7 +75,7 @@ public class OrderDaoImpl implements DAO<Order> {
         Order order = null;
         try {
             Connection con = builder.getConnection();
-            PreparedStatement pst = con.prepareStatement(SELECT_ORDERS_BY_ID);
+            PreparedStatement pst = con.prepareStatement(SELECT_ORDER_BY_ID);
             pst.setLong(1, orderID);
             ResultSet orderSet = pst.executeQuery();
 
@@ -176,6 +179,7 @@ public class OrderDaoImpl implements DAO<Order> {
                 Order order = orders.stream()
                         .filter(elem -> elem.getOrderID() == orderID).findFirst().get();
                 order.addGood(set.getInt("good_id"), set.getInt("amount"));
+                order.getIDs().add(set.getInt("id"));
             }
         }
     }
