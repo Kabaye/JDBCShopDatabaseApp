@@ -17,25 +17,33 @@ public class CustomerDaoImpl implements DAO<Customer> {
 
     private static final String EXCEPTION_MESSAGE = "404 Error! No connection to database!";
 
+    private static final String GET_MAX_ID
+            = "SELECT MAX(customer_id) as MAX_ID FROM customers";
+
     private static final String INSERT
             = "INSERT INTO customers (customer_id, surname_name, phone) VALUES (?, ?, ?)";
-    private static final String INSERT_BANK_DATA
-            = "INSERT INTO payment_data (customer_id, bank_account,account_currency) VALUES (?,?,?)";
+    private static final String INSERT_PAYMENT_DATA
+            = "INSERT INTO payment_data (customer_id, bank_account, account_currency) VALUES (?,?,?)";
 
-    private static final String SELECT_CUSTOMER_AND_BANK_DATA_BY_CUSTOMER_ID
-            = "SELECT customers.customer_id, surname_name,phone,bank_account,account_currency FROM customers " +
+    private static final String SELECT_CUSTOMER_AND_PAYMENT_DATA_BY_CUSTOMER_ID
+            = "SELECT customers.customer_id, surname_name, phone, bank_account, account_currency FROM customers " +
             "INNER JOIN payment_data ON customers.customer_id = payment_data.customer_id where customers.customer_id=?";
 
     private static final String SELECT_ALL
             = "SELECT customers.customer_id, surname_name, phone, bank_account, account_currency FROM customers " +
             "INNER JOIN payment_data ON customers.customer_id = payment_data.customer_id";
 
-    private static final String UPDATE
-            = "UPDATE customers SET surname_name=?,phone-? where customer_id=?";
+    private static final String UPDATE_CUSTOMER
+            = "UPDATE customers SET surname_name=?, phone=? where customer_id=?";
 
-    private static final String GET_MAX_ID = "SELECT MAX(customer_id) as MAX_ID FROM customers";
 
-    private static final String DELETE
+    private static final String UPDATE_PAYMENT_DATA
+            = "UPDATE payment_data SET bank_account=?, account_currency=? where customer_id=?";
+
+    private static final String DELETE_PAYMENT_DATA
+            = "DELETE FROM payment_data WHERE customer_id=?";
+
+    private static final String DELETE_CUSTOMER
             = "DELETE FROM customers WHERE customer_id=?";
 
     private ConnectionBuilder builder = new SimpleConnectionBuilder();
@@ -64,7 +72,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
 
                 pst.close();
 
-                pst = con.prepareStatement(INSERT_BANK_DATA);
+                pst = con.prepareStatement(INSERT_PAYMENT_DATA);
                 pst.setInt(1, customer.getCustomerID());
                 pst.setLong(2, customer.getPaymentData().getBankAccount());
                 pst.setString(3, customer.getPaymentData().getAccountCurrency());
@@ -85,7 +93,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
         Customer customer = null;
         try {
             Connection con = builder.getConnection();
-            PreparedStatement pst = con.prepareStatement(SELECT_CUSTOMER_AND_BANK_DATA_BY_CUSTOMER_ID);
+            PreparedStatement pst = con.prepareStatement(SELECT_CUSTOMER_AND_PAYMENT_DATA_BY_CUSTOMER_ID);
             pst.setLong(1, customerID);
             ResultSet set = pst.executeQuery();
             if (set.next()) {
@@ -129,11 +137,51 @@ public class CustomerDaoImpl implements DAO<Customer> {
 
     @Override
     public Customer update(Customer customer) {
-        return null;
+        try {
+            Connection con = builder.getConnection();
+            PreparedStatement pst = con.prepareStatement(UPDATE_CUSTOMER);
+            pst.setString(1, customer.getSurnameName());
+            pst.setLong(2, customer.getPhone());
+            pst.setInt(3, customer.getCustomerID());
+            pst.executeUpdate();
+
+            pst.close();
+
+            pst = con.prepareStatement(UPDATE_PAYMENT_DATA);
+            pst.setLong(1, customer.getPaymentData().getBankAccount());
+            pst.setString(2, customer.getPaymentData().getAccountCurrency());
+            pst.setInt(3, customer.getCustomerID());
+            pst.executeUpdate();
+
+            pst.close();
+            con.close();
+        } catch (
+                SQLException exc) {
+            System.out.println(EXCEPTION_MESSAGE);
+        }
+        return customer;
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(long customerID) {
+        try {
+            Connection con;
+            con = builder.getConnection();
+            PreparedStatement pst = con.prepareStatement(DELETE_PAYMENT_DATA);
+            pst.setLong(1, customerID);
+            pst.executeUpdate();
 
+            pst.close();
+
+            pst = con.prepareStatement(DELETE_CUSTOMER);
+            pst.setLong(1, customerID);
+            pst.executeUpdate();
+
+            pst.close();
+            con.close();
+        } catch (
+                SQLException exc) {
+            System.out.println(EXCEPTION_MESSAGE);
+        }
     }
 }
