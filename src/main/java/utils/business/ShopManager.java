@@ -4,16 +4,16 @@ import shop.Customer;
 import shop.Order;
 import shop.PaymentData;
 import utils.dao.DAO;
-import utils.dao.DaoFactory;
-import utils.dao.MyDaoFactory;
 import utils.dao.customer.CustomerDaoImpl;
+import utils.dao.factory.DaoFactory;
+import utils.dao.factory.MyDaoFactory;
 
 import java.util.List;
 
 public class ShopManager {
-    DaoFactory daoFactory = new MyDaoFactory();
-    private DAO<Order> orderDAO = daoFactory.getOrderDAO();
-    private DAO<Customer> customerDAO = daoFactory.getCustomerDAO();
+    private final DaoFactory daoFactory = new MyDaoFactory();
+    private final DAO<Order> orderDAO = daoFactory.getOrderDAO();
+    private final DAO<Customer> customerDAO = daoFactory.getCustomerDAO();
 
     public Order addOrder(int customerID, List<Integer> goodIDs, List<Integer> amounts) {
         Order order = null;
