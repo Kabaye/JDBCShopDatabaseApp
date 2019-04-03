@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor(staticName = "of")
 public class Customer {
-    private int customerID;
+    private long customerID;
     private String surnameName;
     private long phone;
     private PaymentData paymentData;
@@ -18,7 +18,7 @@ public class Customer {
     }
 
     public Customer(String surnameName, long phone, PaymentData paymentData) {
-        customerID = 0;
+        customerID = 0l;
 
         this.surnameName = surnameName;
         this.phone = phone;
