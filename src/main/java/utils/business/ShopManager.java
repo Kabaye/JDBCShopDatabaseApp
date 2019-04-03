@@ -15,7 +15,7 @@ public class ShopManager {
     private final DAO<Order> orderDAO = daoFactory.getOrderDAO();
     private final DAO<Customer> customerDAO = daoFactory.getCustomerDAO();
 
-    public Order addOrder(int customerID, List<Integer> goodIDs, List<Integer> amounts) {
+    public Order addOrder(long customerID, List<Long> goodIDs, List<Integer> amounts) {
         Order order = null;
         if ((goodIDs.size() != amounts.size()) || (goodIDs.size() == 0 && amounts.size() == 0)) {
             System.out.println("You try to add invalid data to order (size of list of goods not equal to size of list of amounts OR they are empty), please check your data and try again.");
@@ -35,11 +35,11 @@ public class ShopManager {
         return order;
     }
 
-    public List<Order> findAllOrders() {
+    public List<Order> getAllOrders() {
         return orderDAO.findAll();
     }
 
-    public Order updateOrder(long orderID, List<Integer> goodIDs, List<Integer> amounts) {
+    public Order updateOrder(long orderID, List<Long> goodIDs, List<Integer> amounts) {
         Order order = orderDAO.read(orderID);
         if ((goodIDs.size() != amounts.size()) || (goodIDs.size() == 0 && amounts.size() == 0)) {
             System.out.println("You try to update order with invalid data (size of list of goods not equal to size of list of amounts OR they are empty), please check your data and try again.");
@@ -81,6 +81,10 @@ public class ShopManager {
 
     public Customer updateCustomer(long customerID, String surnameName, long phone, long bankAccount, String accountCurrency) {
         return customerDAO.update(Customer.of(customerID, surnameName, phone, PaymentData.of(customerID, bankAccount, accountCurrency)));
+    }
+
+    public void deleteCustomer(long customerID){
+        customerDAO.delete(customerID);
     }
 
 }
