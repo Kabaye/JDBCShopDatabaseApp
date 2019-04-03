@@ -11,11 +11,15 @@ public class Customer {
     private int customerID;
     private String surnameName;
     private int phone;
+    private PaymentData paymentData;
 
     @Override
     public String toString() {
-        return "Customer ID: " + customerID +
-                ", customer surname and name: \'" + surnameName +
-                "\', phone: +" + phone + ";";
+        return "Customer{" +
+                "customerID = " + customerID +
+                ", surnameName = '" + surnameName + '\'' +
+                ", phone = " + phone +
+                ", paymentData = " + paymentData +
+                '}';
     }
 }

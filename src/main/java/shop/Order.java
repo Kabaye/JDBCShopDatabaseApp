@@ -12,8 +12,17 @@ import java.util.List;
 public class Order {
     private int orderID;
     private int customerID;
+    private List<Integer> IDs;
     private List<Integer> goodIDs;
     private List<Integer> amounts;
+
+
+    public Order(int orderID, int customerID, List<Integer> goodIDs, List<Integer> amounts) {
+        this.orderID = orderID;
+        this.customerID = customerID;
+        this.goodIDs = goodIDs;
+        this.amounts = amounts;
+    }
 
     @Override
     public String toString() {
