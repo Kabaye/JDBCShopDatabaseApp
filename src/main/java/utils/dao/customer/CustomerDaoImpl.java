@@ -31,7 +31,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
 
     private static final String SELECT_ALL
             = "SELECT customers.customer_id, surname_name, phone, bank_account, account_currency FROM customers " +
-            "INNER JOIN payment_data ON customers.customer_id = payment_data.customer_id";
+            "INNER JOIN payment_data ON customers.customer_id = payment_data.customer_id ORDER BY customer_id";
 
     private static final String UPDATE_CUSTOMER
             = "UPDATE customers SET surname_name=?, phone=? where customer_id=?";
