@@ -18,6 +18,8 @@ public class Customer {
     }
 
     public Customer(String surnameName, long phone, PaymentData paymentData) {
+        customerID = 0;
+
         this.surnameName = surnameName;
         this.phone = phone;
         this.paymentData = paymentData;

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,8 +18,10 @@ public class Order {
     private List<Integer> amounts;
 
 
-    public Order(int orderID, int customerID, List<Integer> goodIDs, List<Integer> amounts) {
-        this.orderID = orderID;
+    public Order(int customerID, List<Integer> goodIDs, List<Integer> amounts) {
+        this.orderID = 0;
+        this.IDs = new ArrayList<>();
+
         this.customerID = customerID;
         this.goodIDs = goodIDs;
         this.amounts = amounts;

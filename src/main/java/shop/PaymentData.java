@@ -18,6 +18,8 @@ public class PaymentData {
     }
 
     public PaymentData(long bankAccount, String accountCurrency) {
+        customerId = 0;
+
         this.bankAccount = bankAccount;
         this.accountCurrency = accountCurrency;
     }
