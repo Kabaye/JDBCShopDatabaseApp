@@ -30,7 +30,8 @@ public class OrderDaoImpl implements DAO<Order> {
     private static final String UPDATE
             = "UPDATE orders SET good_id=?, amount=? where id=? and order_id=? and customer_id=?";
 
-    private static final String GET_MAX_ID_AND_NEXT_ORDER_NUM = "SELECT MAX(id) as MAX_ID, MAX(order_id) as MAX_ORDER_NUM FROM orders";
+    private static final String GET_MAX_ID_AND_NEXT_ORDER_NUM
+            = "SELECT MAX(id) as MAX_ID, MAX(order_id) as MAX_ORDER_NUM FROM orders";
 
     private static final String DELETE
             = "DELETE FROM orders WHERE order_id=?";
@@ -47,7 +48,7 @@ public class OrderDaoImpl implements DAO<Order> {
             ResultSet set = pst.executeQuery();
             if (set.next()) {
                 int nextID = set.getInt("MAX_ID") + 1;
-                int orderNum = set.getInt("MAX_ORDER_NUM")+1;
+                int orderNum = set.getInt("MAX_ORDER_NUM") + 1;
                 order.setOrderID(orderNum);
                 pst.close();
                 set.close();
