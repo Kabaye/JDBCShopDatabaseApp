@@ -2,23 +2,26 @@ package utils.business;
 
 import shop.Customer;
 import shop.Order;
+import shop.PaymentData;
 import utils.dao.DAO;
+import utils.dao.DaoFactory;
+import utils.dao.MyDaoFactory;
 import utils.dao.customer.CustomerDaoImpl;
-import utils.dao.order.OrderDaoImpl;
 
 import java.util.List;
 
 public class ShopManager {
-    private DAO<Order> orderDAO = new OrderDaoImpl();
-    private DAO<Customer> customerDAO = new CustomerDaoImpl();
+    DaoFactory daoFactory = new MyDaoFactory();
+    private DAO<Order> orderDAO = daoFactory.getOrderDAO();
+    private DAO<Customer> customerDAO = daoFactory.getCustomerDAO();
 
-    public Order addOrder(int customerId, List<Integer> goodsId, List<Integer> amounts) {
+    public Order addOrder(int customerID, List<Integer> goodIDs, List<Integer> amounts) {
         Order order = null;
-        if ((goodsId.size() != amounts.size()) || (goodsId.size() == 0 && amounts.size() == 0)) {
+        if ((goodIDs.size() != amounts.size()) || (goodIDs.size() == 0 && amounts.size() == 0)) {
             System.out.println("You try to add invalid data to order (size of list of goods not equal to size of list of amounts OR they are empty), please check your data and try again.");
         } else {
-            if (((CustomerDaoImpl) customerDAO).hasID(customerId)) {
-                order = orderDAO.create(new Order(customerId, goodsId, amounts));
+            if (((CustomerDaoImpl) customerDAO).hasID(customerID)) {
+                order = orderDAO.create(new Order(customerID, goodIDs, amounts));
             } else {
                 System.out.println("There is no customer with such id. Add information about you!");
             }
@@ -26,20 +29,58 @@ public class ShopManager {
         return order;
     }
 
-    public Order getOrder(int id) {
-        return null;
+    public Order getOrder(long id) {
+        Order order = null;
+        order = orderDAO.read(id);
+        return order;
     }
 
     public List<Order> findAllOrders() {
-        return null;
+        return orderDAO.findAll();
     }
 
-    public Order updateOrder() {
-        return null;
+    public Order updateOrder(long orderID, List<Integer> goodIDs, List<Integer> amounts) {
+        Order order = orderDAO.read(orderID);
+        if ((goodIDs.size() != amounts.size()) || (goodIDs.size() == 0 && amounts.size() == 0)) {
+            System.out.println("You try to update order with invalid data (size of list of goods not equal to size of list of amounts OR they are empty), please check your data and try again.");
+            return null;
+        }
+        if (order == null) {
+            System.out.println("There is no order with such ID. Please, firstly add order with such id!");
+            return null;
+        }
+
+        order.setGoodIDs(goodIDs);
+        order.setAmounts(amounts);
+
+        if (goodIDs.size() == order.getIDs().size()) {
+            order = orderDAO.update(order);
+        } else {
+            orderDAO.delete(orderID);
+            orderDAO.create(order);
+        }
+
+        return order;
     }
 
-    public void deleteOrder(int id) {
+    public void deleteOrder(long orderID) {
+        orderDAO.delete(orderID);
+    }
 
+    public Customer addCustomer(String surnameName, long phone, long bankAccount, String accountCurrency) {
+        return customerDAO.create(new Customer(surnameName, phone, new PaymentData(bankAccount, accountCurrency)));
+    }
+
+    public Customer getCustomer(long customerID) {
+        return customerDAO.read(customerID);
+    }
+
+    public List<Customer> getAllCustomers() {
+        return customerDAO.findAll();
+    }
+
+    public Customer updateCustomer(long customerID, String surnameName, long phone, long bankAccount, String accountCurrency) {
+        return customerDAO.update(Customer.of(customerID, surnameName, phone, PaymentData.of(customerID, bankAccount, accountCurrency)));
     }
 
 }
