@@ -13,6 +13,10 @@ public class Customer {
     private long phone;
     private PaymentData paymentData;
 
+    public static Customer getBasicInstance(){
+        return new Customer("name_surname", 0, PaymentData.getBasicInstance());
+    }
+
     public Customer(String surnameName, long phone, PaymentData paymentData) {
         this.surnameName = surnameName;
         this.phone = phone;

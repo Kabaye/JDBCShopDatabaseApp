@@ -12,6 +12,11 @@ public class PaymentData {
     private long bankAccount;
     private String accountCurrency;
 
+    public static PaymentData getBasicInstance()
+    {
+        return new PaymentData(0,"BYN");
+    }
+
     public PaymentData(long bankAccount, String accountCurrency) {
         this.bankAccount = bankAccount;
         this.accountCurrency = accountCurrency;
