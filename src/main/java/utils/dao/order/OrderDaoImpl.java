@@ -30,7 +30,7 @@ public class OrderDaoImpl implements DAO<Order> {
     private static final String UPDATE
             = "UPDATE orders SET good_id=?, amount=? where id=? and order_id=? and customer_id=?";
 
-    private static final String GET_MAX_ID = "SELECT MAX(id) as MAX_ID FROM orders";
+    private static final String GET_MAX_ID_AND_NEXT_ORDER_NUM = "SELECT MAX(id) as MAX_ID, MAX(order_id) as MAX_ORDER_NUM FROM orders";
 
     private static final String DELETE
             = "DELETE FROM orders WHERE order_id=?";
@@ -43,10 +43,12 @@ public class OrderDaoImpl implements DAO<Order> {
     public Order create(Order order) {
         try {
             Connection con = builder.getConnection();
-            PreparedStatement pst = con.prepareStatement(GET_MAX_ID);
+            PreparedStatement pst = con.prepareStatement(GET_MAX_ID_AND_NEXT_ORDER_NUM);
             ResultSet set = pst.executeQuery();
             if (set.next()) {
-                int counter = set.getInt("MAX_ID") + 1;
+                int nextID = set.getInt("MAX_ID") + 1;
+                int orderNum = set.getInt("MAX_ORDER_NUM")+1;
+                order.setOrderID(orderNum);
                 pst.close();
                 set.close();
                 pst = con.prepareStatement(INSERT);
@@ -55,11 +57,12 @@ public class OrderDaoImpl implements DAO<Order> {
                     pst.setInt(2, order.getCustomerID());
                     pst.setInt(3, order.getGoodIDs().get(i));
                     pst.setInt(4, order.getAmounts().get(i));
-                    order.getIDs().add(counter);
-                    pst.setInt(5, counter++);
+                    order.getIDs().add(nextID);
+                    pst.setInt(5, nextID++);
                     pst.executeUpdate();
-                    pst.close();
+
                 }
+                pst.close();
                 con.close();
             }
         } catch (
