@@ -10,4 +10,5 @@ import lombok.Setter;
 public class PaymentData {
     private int customerId;
     private int bankAccount;
+    private String accountCurrency;
 }
