@@ -36,7 +36,6 @@ public class CustomerDaoImpl implements DAO<Customer> {
     private static final String UPDATE_CUSTOMER
             = "UPDATE customers SET surname_name=?, phone=? where customer_id=?";
 
-
     private static final String UPDATE_PAYMENT_DATA
             = "UPDATE payment_data SET bank_account=?, account_currency=? where customer_id=?";
 
@@ -45,6 +44,9 @@ public class CustomerDaoImpl implements DAO<Customer> {
 
     private static final String DELETE_CUSTOMER
             = "DELETE FROM customers WHERE customer_id=?";
+
+    private static final String HAS_ID
+            = "SELECT customer_id FROM customers WHERE customer_id=?";
 
     private ConnectionBuilder builder = new SimpleConnectionBuilder();
 
@@ -162,6 +164,10 @@ public class CustomerDaoImpl implements DAO<Customer> {
         return customer;
     }
 
+    /*
+    // delete customer carefully, because some orders int "orders" table can have customer_id same as you want to delete,
+    // so it will cause problems!
+    */
     @Override
     public void delete(long customerID) {
         try {
@@ -183,5 +189,27 @@ public class CustomerDaoImpl implements DAO<Customer> {
                 SQLException exc) {
             System.out.println(EXCEPTION_MESSAGE);
         }
+    }
+
+    public boolean hasID(int customerID){
+        boolean hasID = false;
+        try {
+            Connection con = builder.getConnection();
+            PreparedStatement pst = con.prepareStatement(HAS_ID);
+            pst.setLong(1, customerID);
+            ResultSet set = pst.executeQuery();
+
+            if (set.next()) {
+               hasID = true;
+            }
+
+            set.close();
+            pst.close();
+            con.close();
+        } catch (
+                SQLException exc) {
+            System.out.println(EXCEPTION_MESSAGE);
+        }
+        return hasID;
     }
 }
