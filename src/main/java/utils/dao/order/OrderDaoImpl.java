@@ -47,19 +47,19 @@ public class OrderDaoImpl implements DAO<Order> {
             PreparedStatement pst = con.prepareStatement(GET_MAX_ID_AND_NEXT_ORDER_NUM);
             ResultSet set = pst.executeQuery();
             if (set.next()) {
-                int nextID = set.getInt("MAX_ID") + 1;
-                int orderNum = set.getInt("MAX_ORDER_NUM") + 1;
+                long nextID = set.getInt("MAX_ID") + 1;
+                long orderNum = set.getInt("MAX_ORDER_NUM") + 1;
                 order.setOrderID(orderNum);
                 pst.close();
                 set.close();
                 pst = con.prepareStatement(INSERT);
                 for (int i = 0; i < order.getAmounts().size(); i++) {
-                    pst.setInt(1, order.getOrderID());
-                    pst.setInt(2, order.getCustomerID());
-                    pst.setInt(3, order.getGoodIDs().get(i));
+                    pst.setLong(1, order.getOrderID());
+                    pst.setLong(2, order.getCustomerID());
+                    pst.setLong(3, order.getGoodIDs().get(i));
                     pst.setInt(4, order.getAmounts().get(i));
                     order.getIDs().add(nextID);
-                    pst.setInt(5, nextID++);
+                    pst.setLong(5, nextID++);
                     pst.executeUpdate();
 
                 }
@@ -85,19 +85,19 @@ public class OrderDaoImpl implements DAO<Order> {
 
             int orderID1;
             int customerID;
-            List<Integer> IDs = new ArrayList<>();
-            List<Integer> goods = new ArrayList<>();
+            List<Long> IDs = new ArrayList<>();
+            List<Long> goods = new ArrayList<>();
             List<Integer> amount = new ArrayList<>();
 
             if (orderSet.next()) {
                 orderID1 = orderSet.getInt("order_id");
                 customerID = orderSet.getInt("customer_id");
-                IDs.add(orderSet.getInt("id"));
-                goods.add(orderSet.getInt("good_id"));
+                IDs.add(orderSet.getLong("id"));
+                goods.add(orderSet.getLong("good_id"));
                 amount.add(orderSet.getInt("amount"));
                 while (orderSet.next()) {
-                    IDs.add(orderSet.getInt("id"));
-                    goods.add(orderSet.getInt("good_id"));
+                    IDs.add(orderSet.getLong("id"));
+                    goods.add(orderSet.getLong("good_id"));
                     amount.add(orderSet.getInt("amount"));
                 }
                 order = Order.of(orderID1, customerID, IDs, goods, amount);
@@ -132,11 +132,11 @@ public class OrderDaoImpl implements DAO<Order> {
             Connection con = builder.getConnection();
             PreparedStatement pst = con.prepareStatement(UPDATE);
             for (int i = 0; i < order.getGoodIDs().size(); i++) {
-                pst.setInt(1, order.getGoodIDs().get(i));
+                pst.setLong(1, order.getGoodIDs().get(i));
                 pst.setInt(2, order.getAmounts().get(i));
-                pst.setInt(3, order.getIDs().get(i));
-                pst.setInt(4, order.getOrderID());
-                pst.setInt(5, order.getCustomerID());
+                pst.setLong(3, order.getIDs().get(i));
+                pst.setLong(4, order.getOrderID());
+                pst.setLong(5, order.getCustomerID());
                 pst.executeUpdate();
             }
             pst.close();
@@ -165,17 +165,17 @@ public class OrderDaoImpl implements DAO<Order> {
     private void addAll(ResultSet set, List<Order> orders) throws SQLException {
         Set<Integer> orderIDs = new TreeSet<>();
         int customerID;
-        List<Integer> goods;
+        List<Long> goods;
         List<Integer> amounts;
-        List<Integer> IDs;
+        List<Long> IDs;
         while (set.next()) {
             final int orderID = set.getInt("order_id");
             if (orderIDs.add(orderID)) {
                 customerID = set.getInt("customer_id");
                 IDs = new ArrayList<>();
-                IDs.add(set.getInt("id"));
+                IDs.add(set.getLong("id"));
                 goods = new ArrayList<>();
-                goods.add(set.getInt("good_id"));
+                goods.add(set.getLong("good_id"));
                 amounts = new ArrayList<>();
                 amounts.add(set.getInt("amount"));
                 orders.add(Order.of(orderID, customerID, IDs, goods, amounts));
@@ -183,7 +183,7 @@ public class OrderDaoImpl implements DAO<Order> {
                 Order order = orders.stream()
                         .filter(elem -> elem.getOrderID() == orderID).findFirst().get();
                 order.addGood(set.getInt("good_id"), set.getInt("amount"));
-                order.getIDs().add(set.getInt("id"));
+                order.getIDs().add(set.getLong("id"));
             }
         }
     }

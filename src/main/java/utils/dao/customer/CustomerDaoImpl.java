@@ -63,7 +63,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
                 set.close();
 
                 pst = con.prepareStatement(INSERT);
-                pst.setInt(1, counter);
+                pst.setLong(1, counter);
 
                 customer.setCustomerID(counter);
                 customer.getPaymentData().setCustomerId(counter);
@@ -75,7 +75,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
                 pst.close();
 
                 pst = con.prepareStatement(INSERT_PAYMENT_DATA);
-                pst.setInt(1, customer.getCustomerID());
+                pst.setLong(1, customer.getCustomerID());
                 pst.setLong(2, customer.getPaymentData().getBankAccount());
                 pst.setString(3, customer.getPaymentData().getAccountCurrency());
                 pst.executeUpdate();
@@ -99,8 +99,8 @@ public class CustomerDaoImpl implements DAO<Customer> {
             pst.setLong(1, customerID);
             ResultSet set = pst.executeQuery();
             if (set.next()) {
-                customer = Customer.of(set.getInt("customer_id"), set.getString("surname_name"),
-                        set.getLong("phone"), PaymentData.of(set.getInt("customer_id"),
+                customer = Customer.of(set.getLong("customer_id"), set.getString("surname_name"),
+                        set.getLong("phone"), PaymentData.of(set.getLong("customer_id"),
                                 set.getLong("bank_account"), set.getString("account_currency")));
             }
 
@@ -122,8 +122,8 @@ public class CustomerDaoImpl implements DAO<Customer> {
             PreparedStatement pst = con.prepareStatement(SELECT_ALL);
             ResultSet set = pst.executeQuery();
             while (set.next()) {
-                customers.add(Customer.of(set.getInt("customer_id"), set.getString("surname_name"),
-                        set.getLong("phone"), PaymentData.of(set.getInt("customer_id"),
+                customers.add(Customer.of(set.getLong("customer_id"), set.getString("surname_name"),
+                        set.getLong("phone"), PaymentData.of(set.getLong("customer_id"),
                                 set.getLong("bank_account"), set.getString("account_currency"))));
             }
 
@@ -144,7 +144,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
             PreparedStatement pst = con.prepareStatement(UPDATE_CUSTOMER);
             pst.setString(1, customer.getSurnameName());
             pst.setLong(2, customer.getPhone());
-            pst.setInt(3, customer.getCustomerID());
+            pst.setLong(3, customer.getCustomerID());
             pst.executeUpdate();
 
             pst.close();
@@ -152,7 +152,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
             pst = con.prepareStatement(UPDATE_PAYMENT_DATA);
             pst.setLong(1, customer.getPaymentData().getBankAccount());
             pst.setString(2, customer.getPaymentData().getAccountCurrency());
-            pst.setInt(3, customer.getCustomerID());
+            pst.setLong(3, customer.getCustomerID());
             pst.executeUpdate();
 
             pst.close();
@@ -191,7 +191,7 @@ public class CustomerDaoImpl implements DAO<Customer> {
         }
     }
 
-    public boolean hasID(int customerID){
+    public boolean hasID(long customerID){
         boolean hasID = false;
         try {
             Connection con = builder.getConnection();
