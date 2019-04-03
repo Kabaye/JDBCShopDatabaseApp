@@ -36,6 +36,7 @@ public class OrderDaoImpl implements DAO<Order> {
     private ConnectionBuilder builder = new SimpleConnectionBuilder();
 
     //add order
+    @Override
     public Order create(Order order) {
         try {
             Connection con = builder.getConnection();
@@ -66,6 +67,7 @@ public class OrderDaoImpl implements DAO<Order> {
     }
 
     //get order
+    @Override
     public Order read(long orderID) {
         Order order = null;
         try {
@@ -103,6 +105,7 @@ public class OrderDaoImpl implements DAO<Order> {
         return order;
     }
 
+    @Override
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
         try {
@@ -116,6 +119,7 @@ public class OrderDaoImpl implements DAO<Order> {
         return orders;
     }
 
+    @Override
     public Order update(Order order) {
         try {
             Connection con = builder.getConnection();
@@ -137,6 +141,7 @@ public class OrderDaoImpl implements DAO<Order> {
     }
 
     //удаляю весь заказ((
+    @Override
     public void delete(long orderID) {
         try {
             Connection con = builder.getConnection();
