@@ -23,10 +23,12 @@ public class CustomerDaoImpl implements DAO<Customer> {
             = "INSERT INTO payment_data (customer_id, bank_account,account_currency) VALUES (?,?,?)";
 
     private static final String SELECT_CUSTOMER_AND_BANK_DATA_BY_CUSTOMER_ID
-            = "SELECT customers.customer_id, surname_name,phone,bank_account,account_currency FROM customers INNER JOIN payment_data ON customers.customer_id = payment_data.customer_id where customers.customer_id=?";
+            = "SELECT customers.customer_id, surname_name,phone,bank_account,account_currency FROM customers " +
+            "INNER JOIN payment_data ON customers.customer_id = payment_data.customer_id where customers.customer_id=?";
 
     private static final String SELECT_ALL
-            = "SELECT * FROM customers";
+            = "SELECT customers.customer_id, surname_name, phone, bank_account, account_currency FROM customers " +
+            "INNER JOIN payment_data ON customers.customer_id = payment_data.customer_id";
 
     private static final String UPDATE
             = "UPDATE customers SET surname_name=?,phone-? where customer_id=?";
@@ -87,12 +89,9 @@ public class CustomerDaoImpl implements DAO<Customer> {
             pst.setLong(1, customerID);
             ResultSet set = pst.executeQuery();
             if (set.next()) {
-                int customerID1 = set.getInt("customer_id");
-                String surnameName = set.getString("surname_name");
-                long phone = set.getLong("phone");
-
-                PaymentData paymentData = PaymentData.of(customerID1, set.getLong("bank_account"), set.getString("account_currency"));
-                customer = Customer.of(customerID1, surnameName, phone, paymentData);
+                customer = Customer.of(set.getInt("customer_id"), set.getString("surname_name"),
+                        set.getLong("phone"), PaymentData.of(set.getInt("customer_id"),
+                                set.getLong("bank_account"), set.getString("account_currency")));
             }
 
             set.close();
@@ -108,6 +107,23 @@ public class CustomerDaoImpl implements DAO<Customer> {
     @Override
     public List<Customer> findAll() {
         List<Customer> customers = new ArrayList<>();
+        try {
+            Connection con = builder.getConnection();
+            PreparedStatement pst = con.prepareStatement(SELECT_ALL);
+            ResultSet set = pst.executeQuery();
+            while (set.next()) {
+                customers.add(Customer.of(set.getInt("customer_id"), set.getString("surname_name"),
+                        set.getLong("phone"), PaymentData.of(set.getInt("customer_id"),
+                                set.getLong("bank_account"), set.getString("account_currency"))));
+            }
+
+            set.close();
+            pst.close();
+            con.close();
+        } catch (
+                SQLException exc) {
+            System.out.println(EXCEPTION_MESSAGE);
+        }
         return customers;
     }
 
