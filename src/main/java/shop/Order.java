@@ -15,10 +15,10 @@ public class Order {
     private long customerID;
     private List<Long> IDs;
     private List<Long> goodIDs;
-    private List<Long> amounts;
+    private List<Integer> amounts;
 
 
-    public Order(long customerID, List<Long> goodIDs, List<Long> amounts) {
+    public Order(long customerID, List<Long> goodIDs, List<Integer> amounts) {
         this.orderID = 0;
         this.IDs = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class Order {
                 '}';
     }
 
-    public void addGood(long goodID, long amount)
+    public void addGood(long goodID, int amount)
     {
         goodIDs.add(goodID);
         amounts.add(amount);
