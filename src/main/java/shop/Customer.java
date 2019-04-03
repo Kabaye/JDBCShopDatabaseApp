@@ -10,7 +10,7 @@ import lombok.Setter;
 public class Customer {
     private int customerID;
     private String surnameName;
-    private int phone;
+    private long phone;
     private PaymentData paymentData;
 
     @Override

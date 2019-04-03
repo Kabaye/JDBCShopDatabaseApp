@@ -9,6 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor(staticName = "of")
 public class PaymentData {
     private int customerId;
-    private int bankAccount;
+    private long bankAccount;
     private String accountCurrency;
 }
